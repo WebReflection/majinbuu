@@ -1,0 +1,2 @@
+# majinbuu
+coming soon
