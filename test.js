@@ -1,3 +1,6 @@
+var $Uint16Array = global.Uint16Array;
+global.Uint16Array = undefined;
+
 var {title, assert, log} = require('tressa');
 var majinbuu = require('./index.js');
 
@@ -28,6 +31,11 @@ function test(a, b) {
 test('', '');
 test('same', 'same');
 test('democrat', 'republican');
+
+delete require.cache[require.resolve('./index.js')];
+global.Uint16Array = $Uint16Array;
+var majinbuu = require('./index.js');
+
 test('kitten', 'sitting');
 test('abc', '');
 test('roar', 'meow');
@@ -55,3 +63,13 @@ list = ['12'];
 aura = majinbuu.aura(wrap, list);
 majinbuu(aura, ['a', 'b']);
 assert(aura.join('') === 'ab', 'single to double is OK');
+
+log('');
+log('## Benchmark');
+var stress = 1000;
+var stress1 = new Array(stress + 1).join(',').split(',');
+var stress2 = new Array(stress + 1).join('-').split('-');
+console.time(stress + ' grid');
+majinbuu(stress1, stress2);
+console.timeEnd(stress + ' grid');
+log('');

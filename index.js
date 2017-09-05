@@ -7,21 +7,23 @@ var majinbuu = function () {'use strict';
     DELETE = 'del',
     INSERT = 'ins',
     SUBSTITUTE = 'sub',
-    AuraPrototype = Aura.prototype
+    AuraPrototype = Aura.prototype,
+    TypedArray = /^u/.test(typeof Uint16Array) ? Array : Uint16Array,
+    BYTES_PER_ELEMENT = TypedArray.BYTES_PER_ELEMENT || 1
   ;
 
   // readapted from:
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
   function majinbuu(from, to) {
     var
-      min = Math.min,
       fromLength = from.length,
       toLength = to.length,
       X = 0,
       Y = 0,
       y = 0,
       x = 0,
-      grid, tmp;
+      grid, tLength,
+      sub, ins, del;
     ;
     if (fromLength < 1) {
       if (toLength) from.splice.apply(from, [0, 0].concat(to));
@@ -31,21 +33,27 @@ var majinbuu = function () {'use strict';
       from.splice(0);
       return;
     }
-    grid = [[0]];
-    while(x++ < toLength) grid[0][x] = x;
-    while(y++ < fromLength){
+    ++toLength;
+    ++fromLength;
+    tLength = BYTES_PER_ELEMENT * toLength;
+    grid = Array(fromLength);
+    grid[0] = new TypedArray(tLength);
+    while(++x < toLength) grid[0][x] = x;
+    while(++y < fromLength){
       X = x = 0;
-      tmp = from[Y];
-      grid[y] = [y];
-      while(x++ < toLength){
-        grid[y][x] = min(
-          grid[Y][x] + 1,
-          grid[y][X] + 1,
-          grid[Y][X] + (tmp === to[X] ? 0 : 1)
-        );
-        X++;
+      (grid[y] = new TypedArray(tLength))[0] = y;
+      while(++x < toLength){
+        sub = grid[Y][x] + 1;
+        ins = grid[y][X] + 1;
+        del = grid[Y][X] + (from[Y] === to[X] ? 0 : 1);
+        grid[y][x] = sub < ins ?
+                      (sub < del ?
+                        sub : del) :
+                      (ins < del ?
+                        ins : del);
+        ++X;
       };
-      Y++;
+      ++Y;
     };
     performOperations(
       from,
