@@ -28,7 +28,8 @@ var majinbuu = function () {'use strict';
       return;
     }
     if (toLength < 1) {
-      return from.splice(0);
+      from.splice(0);
+      return;
     }
     grid = [[0]];
     while(x++ < toLength) grid[0][x] = x;
