@@ -28,6 +28,14 @@ majinbuu(aura, ['c', 'a', 'd', 'a', 'b', 'r', 'a']);
 // 2 0 "d" "a"
 ```
 
+The optional third argument avoid processing grids that are too big (comparing lists with too many items).
+```js
+const noMoreThan1K = 1000;
+majinbuu(list1, list2, noMoreThan1K);
+```
+If the product of `list1` and `list2` lengths is higher than `noMoreThan1K`,
+the splice operation will remove all `list` items and push all `list2`.
+
 ### Compatibility
 
 Every. JavaScript. Engine.

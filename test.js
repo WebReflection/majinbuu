@@ -55,3 +55,20 @@ list = ['12'];
 aura = majinbuu.aura(wrap, list);
 majinbuu(aura, ['a', 'b']);
 assert(aura.join('') === 'ab', 'single to double is OK');
+
+list = '0123456789'.split('');
+log('## grid limit');
+majinbuu(
+  majinbuu.aura({
+    splice: function (index, many) {
+      assert(
+        index === 0 &&
+        many === list.length &&
+        list.slice.call(arguments, 2).join('') === 'OK',
+        'max grid limit respected'
+      );
+    }
+  }, list),
+  'OK'.split(''),
+  list.length
+);
