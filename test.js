@@ -50,3 +50,8 @@ majinbuu(aura, 'cadabra'.split(''));
 assert(wrap.spliced, 'aura invoked the wrapper instead');
 assert(list.join('') === 'cadabra', 'aura modified the list');
 assert(aura.join('') === 'cadabra', 'aura inherits list');
+
+list = ['12'];
+aura = majinbuu.aura(wrap, list);
+majinbuu(aura, ['a', 'b']);
+assert(aura.join('') === 'ab', 'single to double is OK');
