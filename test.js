@@ -70,5 +70,5 @@ majinbuu(
     }
   }, list),
   'OK'.split(''),
-  list.length
+  3
 );

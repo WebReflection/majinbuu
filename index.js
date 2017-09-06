@@ -12,12 +12,12 @@ var majinbuu = function () {'use strict';
 
   // readapted from:
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
-  function majinbuu(from, to, maxGridSize) {
+  function majinbuu(from, to, MAX_SIZE) {
     var
       min = Math.min,
       fromLength = from.length,
       toLength = to.length,
-      TOO_MANY = Math.sqrt(maxGridSize || Infinity) < (fromLength * toLength),
+      TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt(fromLength * toLength),
       X = 0,
       Y = 0,
       y = 0,
