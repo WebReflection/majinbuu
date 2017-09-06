@@ -7,26 +7,21 @@ var majinbuu = function () {'use strict';
     DELETE = 'del',
     INSERT = 'ins',
     SUBSTITUTE = 'sub',
-    AuraPrototype = Aura.prototype
+    AuraPrototype = Aura.prototype,
+    TypedArray = /^u/.test(typeof Int32Array) ? Array : Int32Array
   ;
 
   // readapted from:
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
   function majinbuu(from, to, MAX_SIZE) {
     var
-      min = Math.min,
       fromLength = from.length,
       toLength = to.length,
-      TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt(fromLength * toLength),
-      X = 0,
-      Y = 0,
-      y = 0,
-      x = 0,
-      grid, tmp;
+      TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt(fromLength * toLength)
     ;
-    if (TOO_MANY || fromLength < 1) {
-      if (TOO_MANY || toLength) {
-        from.splice.apply(from, [0, from.length].concat(to));
+    if (fromLength < 1 || TOO_MANY) {
+      if (toLength || TOO_MANY) {
+        from.splice.apply(from, [0, fromLength].concat(to));
       }
       return;
     }
@@ -34,25 +29,9 @@ var majinbuu = function () {'use strict';
       from.splice(0);
       return;
     }
-    grid = [[0]];
-    while(x++ < toLength) grid[0][x] = x;
-    while(y++ < fromLength){
-      X = x = 0;
-      tmp = from[Y];
-      grid[y] = [y];
-      while(x++ < toLength){
-        grid[y][x] = min(
-          grid[Y][x] + 1,
-          grid[y][X] + 1,
-          grid[Y][X] + (tmp === to[X] ? 0 : 1)
-        );
-        X++;
-      };
-      Y++;
-    };
     performOperations(
       from,
-      getOperations(from, to, grid)
+      getOperations(from, to, levenstein(from, to))
     );
   }
 
@@ -75,6 +54,44 @@ var majinbuu = function () {'use strict';
     this.splice = splice;
   }
 
+  // originally readapted from:
+  // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
+  // then rewritten in C for Emscripten (see levenstein.c)
+  // then "screw you ASM" due no much gain but very bloated code
+  function levenstein(from, to) {
+    var fromLength = from.length + 1;
+    var toLength = to.length + 1;
+    var size = fromLength * toLength;
+    var x = 0;
+    var y = 0;
+    var X = 0;
+    var Y = 0;
+    var crow = 0;
+    var prow = 0;
+    var del, ins, sub;
+    var grid = new TypedArray(size);
+    while (x++ < toLength) grid[x] = x;
+    while (++y < fromLength) {
+      X = x = 0;
+      crow = y * toLength;
+      prow = Y * toLength;
+      grid[crow + x] = y;
+      while (++x < toLength) {
+        del = grid[prow + x] + 1;
+        ins = grid[crow + X] + 1;
+        sub = grid[prow + X] + (from[Y] == to[X] ? 0 : 1);
+        grid[crow + x] = del < ins ?
+                          (del < sub ?
+                            del : sub) :
+                          (ins < sub ?
+                            ins : sub);
+        ++X;
+      };
+      ++Y;
+    }
+    return grid;
+  }
+
   // add operations (in reversed order)
   function addOperation(list, type, x, y, count, items) {
     list.unshift({
@@ -94,13 +111,16 @@ var majinbuu = function () {'use strict';
       XL = X.length + 1,
       y = YL - 1,
       x = XL - 1,
-      cell, top, left, diagonal
+      cell, top, left, diagonal,
+      crow, prow
     ;
     while (x && y) {
-      cell = grid[y][x];
-      top = grid[y - 1][x];
-      left = grid[y][x - 1];
-      diagonal = grid[y - 1][x - 1];
+      crow = y * XL;
+      prow = (y - 1) * XL;
+      cell = grid[crow + x];
+      top = grid[prow + x];
+      left = grid[crow + x - 1];
+      diagonal = grid[prow + x - 1];
       if (diagonal <= left && diagonal <= top && diagonal <= cell) {
         x--;
         y--;

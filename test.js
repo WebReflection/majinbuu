@@ -34,6 +34,10 @@ test('roar', 'meow');
 test('abra', 'cadabra');
 test('matrix', 'xxxmatr');
 
+delete global.Int32Array;
+delete require.cache[require.resolve('./index.js')];
+var majinbuu = require('./index.js');
+
 log('## majinbuu.aura');
 var list = 'abra'.split('');
 var wrap = {
