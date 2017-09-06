@@ -33,8 +33,8 @@ The optional third argument avoid processing grids that are too big (comparing l
 const noMoreThan1K = 1000;
 majinbuu(list1, list2, noMoreThan1K);
 ```
-If the product of `list1` and `list2` lengths is higher than `noMoreThan1K`,
-the splice operation will remove all `list` items and push all `list2`.
+If the square of the `list1` and `list2` product is higher than `noMoreThan1K`,
+the splice operation will remove all `list1` items and push all `list2`.
 
 ### Compatibility
 
