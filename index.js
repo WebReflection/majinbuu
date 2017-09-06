@@ -70,7 +70,8 @@ var majinbuu = function () {'use strict';
     var prow = 0;
     var del, ins, sub;
     var grid = new TypedArray(size);
-    while (x++ < toLength) grid[x] = x;
+    grid[0] = 0;
+    while (++x < toLength) grid[x] = x;
     while (++y < fromLength) {
       X = x = 0;
       crow = y * toLength;

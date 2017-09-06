@@ -16,7 +16,8 @@ int *levenstein(char *from, char *to) {
   int prow = 0;
   int del, ins, sub;
   int *grid = malloc(sizeof(int) * size);
-  while (x++ < toLength) grid[x] = x;
+  grid[0] = 0;
+  while (++x < toLength) grid[x] = x;
   while (++y < fromLength) {
     X = x = 0;
     crow = y * toLength;
