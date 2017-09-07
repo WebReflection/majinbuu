@@ -7,7 +7,6 @@ var majinbuu = function () {'use strict';
     DELETE = 'del',
     INSERT = 'ins',
     SUBSTITUTE = 'sub',
-    AuraPrototype = Aura.prototype,
     TypedArray = /^u/.test(typeof Int32Array) ? Array : Int32Array
   ;
 
@@ -37,22 +36,23 @@ var majinbuu = function () {'use strict';
 
   // given an object that would like to intercept
   // all splice operations performed through a list,
-  // return a list "aura" that will delegate all splices
-  majinbuu.aura = function aura(interceptor, list) {
-    Aura.prototype = list;
-    return new Aura(interceptor);
+  // wraps the list.splice method to delegate such object
+  // and it puts back original splice right before
+  // every invocation.
+  // Note: do not use the same list in two different aura
+  majinbuu.aura = function aura(splicer, list) {
+    var splice = list.splice;
+    list.splice = function hodor() {
+      list.splice = splice;
+      var result = splicer.splice.apply(splicer, arguments);
+      list.splice = hodor;
+    };
+    return list;
   };
 
   return majinbuu;
 
   // Helpers - - - - - - - - - - - - - - - - - - - - - -
-
-  // Aura instances are just Array bridges
-  function Aura(interceptor) {
-    Aura.prototype = AuraPrototype;
-    this._ = interceptor;
-    this.splice = splice;
-  }
 
   // originally readapted from:
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
@@ -173,11 +173,6 @@ var majinbuu = function () {'use strict';
       }
       target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
     }
-  }
-
-  // delegate all splice operations through an aura
-  function splice() {
-    return this._.splice.apply(this._, arguments);
   }
 
   /* one-by-one operation (testing purpose)

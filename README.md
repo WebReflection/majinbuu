@@ -12,7 +12,9 @@ majinbuu(abra, ['c', 'a', 'd', 'a', 'b', 'r', 'a']);
 abra; // now ['c', 'a', 'd', 'a', 'b', 'r', 'a']
 ```
 
-It is also possible to intercept all splice calls using an `aura`.
+It is also possible to intercept all splice calls using an `aura`,
+which augments the `splice` method of the list,
+delegating the interceptor one.
 ```js
 const abra = ['a', 'b', 'r', 'a'];
 const interceptor = {
