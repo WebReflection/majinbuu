@@ -46,6 +46,7 @@ var majinbuu = function () {'use strict';
       list.splice = splice;
       var result = splicer.splice.apply(splicer, arguments);
       list.splice = hodor;
+      return result;
     };
     return list;
   };
