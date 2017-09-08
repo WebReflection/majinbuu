@@ -20,8 +20,8 @@ int *levenstein(char *from, char *to) {
   while (++x < toLength) grid[x] = x;
   while (++y < fromLength) {
     X = x = 0;
+    prow = crow;
     crow = y * toLength;
-    prow = Y * toLength;
     grid[crow + x] = y;
     while (++x < toLength) {
       del = grid[prow + x] + 1;
@@ -34,7 +34,7 @@ int *levenstein(char *from, char *to) {
                           ins : sub);
       ++X;
     };
-    ++Y;
+    Y = y;
   }
   return grid;
 }

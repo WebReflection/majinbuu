@@ -10,8 +10,6 @@ var majinbuu = function () {'use strict';
     TypedArray = /^u/.test(typeof Int32Array) ? Array : Int32Array
   ;
 
-  // readapted from:
-  // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
   function majinbuu(from, to, MAX_SIZE) {
     var
       fromLength = from.length,
@@ -75,8 +73,8 @@ var majinbuu = function () {'use strict';
     while (++x < toLength) grid[x] = x;
     while (++y < fromLength) {
       X = x = 0;
+      prow = crow;
       crow = y * toLength;
-      prow = Y * toLength;
       grid[crow + x] = y;
       while (++x < toLength) {
         del = grid[prow + x] + 1;
@@ -89,7 +87,7 @@ var majinbuu = function () {'use strict';
                             ins : sub);
         ++X;
       };
-      ++Y;
+      Y = y;
     }
     return grid;
   }
@@ -117,12 +115,12 @@ var majinbuu = function () {'use strict';
       crow, prow
     ;
     while (x && y) {
-      crow = y * XL;
-      prow = (y - 1) * XL;
-      cell = grid[crow + x];
-      top = grid[prow + x];
-      left = grid[crow + x - 1];
-      diagonal = grid[prow + x - 1];
+      crow = y * XL + x;
+      prow = crow - XL;
+      cell = grid[crow];
+      top = grid[prow];
+      left = grid[crow - 1];
+      diagonal = grid[prow - 1];
       if (diagonal <= left && diagonal <= top && diagonal <= cell) {
         x--;
         y--;
