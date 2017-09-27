@@ -14,7 +14,7 @@ var majinbuu = function () {'use strict';
     var
       fromLength = from.length,
       toLength = to.length,
-      TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt(fromLength * toLength)
+      TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt((fromLength || 1) * (toLength || 1))
     ;
     if (fromLength < 1 || TOO_MANY) {
       if (toLength || TOO_MANY) {
