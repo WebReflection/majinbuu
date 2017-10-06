@@ -1,5 +1,5 @@
 var {title, assert, log} = require('tressa');
-var majinbuu = require('./index.js');
+var majinbuu = require('./index.js').default;
 
 title('Majin Buu');
 

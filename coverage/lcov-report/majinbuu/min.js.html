@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for majinbuu/min.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">majinbuu/</a> min.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">12.12% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>4/33</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">8.2% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>5/61</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">11.11% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>1/1</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var _typeof="function"==typeof Symbol&amp;&amp;"symbol"==typeof Symbol.iterator?function(t){return typeof t}:<span class="fstat-no" title="function not covered" ><span class="branch-1 cbranch-no" title="branch not covered" >function(t){<span class="cstat-no" title="statement not covered" ></span>return t&amp;&amp;"function"==typeof Symbol&amp;&amp;t.constructor===Symbol&amp;&amp;t!==Symbol.prototype?"symbol":typeof t}</span>,</span>DELETE="del",INSERT="ins",SUBSTITUTE="sub",TypedArray=/^u/.test("undefined"==typeof Int32Array?<span class="branch-0 cbranch-no" title="branch not covered" >"undefined":</span>_typeof(Int32Array))?<span class="branch-0 cbranch-no" title="branch not covered" >Array:</span>Int32Array,addOperation=<span class="fstat-no" title="function not covered" >function(t,e,o,n,r,i){<span class="cstat-no" title="statement not covered" ></span>t.unshift({type:e,x:o,y:n,count:r,items:i})}</span>,aura=<span class="fstat-no" title="function not covered" >function(t,e){<span class="cstat-no" title="statement not covered" ></span>var o=e.splice;<span class="cstat-no" title="statement not covered" >r</span>eturn e.splice=<span class="fstat-no" title="function not covered" >function n(){<span class="cstat-no" title="statement not covered" ></span>e.splice=o;<span class="cstat-no" title="statement not covered" >v</span>ar r=t.splice.apply(t,arguments);<span class="cstat-no" title="statement not covered" >r</span>eturn e.splice=n,r}</span>,e}</span>,getOperations=<span class="fstat-no" title="function not covered" >function(t,e,o){<span class="cstat-no" title="statement not covered" ></span>for(var n=[],r=t.length+1,i=e.length+1,a=r-1,p=i-1,u=void 0,y=void 0,c=void 0,s=void 0,d=void 0,f=void 0;p&amp;&amp;a;)<span class="cstat-no" title="statement not covered" >f=(d=a*i+p)-i,u=o[d],y=o[f],c=o[d-1],(s=o[f-1])&lt;=c&amp;&amp;s&lt;=y&amp;&amp;s&lt;=u?(p--,a--,s&lt;u&amp;&amp;addOperation(n,SUBSTITUTE,p,a,1,[e[p]])):c&lt;=y&amp;&amp;c&lt;=u?addOperation(n,INSERT,--p,a,0,[e[p]]):addOperation(n,DELETE,p,--a,1,[]);<span class="cstat-no" title="statement not covered" >f</span></span>or(;p--;)<span class="cstat-no" title="statement not covered" >addOperation(n,INSERT,p,a,0,[e[p]]);<span class="cstat-no" title="statement not covered" >f</span></span>or(;a--;)<span class="cstat-no" title="statement not covered" >addOperation(n,DELETE,p,a,1,[]);<span class="cstat-no" title="statement not covered" >r</span></span>eturn n}</span>,levenstein=<span class="fstat-no" title="function not covered" >function(t,e){<span class="cstat-no" title="statement not covered" ></span>var o=t.length+1,n=e.length+1,r=new TypedArray(o*n),i=0,a=0,p=0,u=0,y=0,c=0,s=void 0,d=void 0,f=void 0;<span class="cstat-no" title="statement not covered" >f</span>or(r[0]=0;++i&lt;n;)<span class="cstat-no" title="statement not covered" >r[i]=i;<span class="cstat-no" title="statement not covered" >f</span></span>or(;++a&lt;o;){<span class="cstat-no" title="statement not covered" >for(p=i=0,c=y,r[(y=a*n)+i]=a;++i&lt;n;)<span class="cstat-no" title="statement not covered" >s=r[c+i]+1,d=r[y+p]+1,f=r[c+p]+(t[u]==e[p]?0:1),r[y+i]=s&lt;d?s&lt;f?s:f:d&lt;f?d:f,++p;<span class="cstat-no" title="statement not covered" >u</span></span>=a}<span class="cstat-no" title="statement not covered" ></span>r</span>eturn r}</span>,majinbuu=<span class="fstat-no" title="function not covered" >function(t,e,o){<span class="cstat-no" title="statement not covered" ></span>var n=t.length,r=e.length,i=(o||1/0)&lt;Math.sqrt((n||1)*(r||1));<span class="cstat-no" title="statement not covered" >n</span>&lt;1||i?(r||i)&amp;&amp;t.splice.apply(t,[0,n].concat(e)):r&lt;1?t.splice(0):performOperations(t,getOperations(t,e,levenstein(t,e)))}</span>,performOperations=<span class="fstat-no" title="function not covered" >function(t,e){<span class="cstat-no" title="statement not covered" ></span>var o=e.length,n=0,r=1,i=void 0,a=void 0,p=void 0;<span class="cstat-no" title="statement not covered" >i</span>f(o){<span class="cstat-no" title="statement not covered" >for(p=a=e[0];r&lt;o;)<span class="cstat-no" title="statement not covered" >i=e[r++],a.type===i.type&amp;&amp;i.x-a.x&lt;=1&amp;&amp;i.y-a.y&lt;=1?(p.count+=i.count,p.items=p.items.concat(i.items)):(t.splice.apply(t,[p.y+n,p.count].concat(p.items)),n+=p.type===INSERT?p.items.length:p.type===DELETE?-p.count:0,p=i),a=i;<span class="cstat-no" title="statement not covered" >t</span></span>.splice.apply(t,[p.y+n,p.count].concat(p.items))}</span>}</span>;majinbuu.aura=aura,exports.aura=aura,exports.majinbuu=majinbuu,exports.default=majinbuu;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 06 2017 14:32:31 GMT-0300 (-03)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

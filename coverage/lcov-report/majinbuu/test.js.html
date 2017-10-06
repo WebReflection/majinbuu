@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">74% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>50/50</span>
+        <span class='fraction'>37/50</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">72.73% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>11/11</span>
+        <span class='fraction'>8/11</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">50% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>4/4</span>
+        <span class='fraction'>2/4</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">74% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>50/50</span>
+        <span class='fraction'>37/50</span>
       </div>
     </div>
   </div>
-  <div class='status-line high'></div>
+  <div class='status-line medium'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -165,29 +165,29 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4×</span>
-<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,7 +198,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var {title, assert, log} = require('tressa');
-var majinbuu = require('./index.js');
+var majinbuu = require('./index.js').default;
 &nbsp;
 title('Majin Buu');
 &nbsp;
@@ -241,30 +241,30 @@ log('## majinbuu.aura');
 var list = 'abra'.split('');
 var wrap = {
   spliced: false,
-  splice: function () {
-    this.spliced = true;
-    this.result = list.splice.apply(list, arguments);
+  splice: <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >    this.spliced = true;</span>
+<span class="cstat-no" title="statement not covered" >    this.result = list.splice.apply(list, arguments);</span>
   }
 };
 &nbsp;
 var aura = majinbuu.aura(wrap, list);
 &nbsp;
 majinbuu(aura, 'cadabra'.split(''));
-assert(wrap.spliced, 'aura invoked the wrapper instead');
-assert(list.join('') === 'cadabra', 'aura modified the list');
-assert(aura.join('') === 'cadabra', 'aura inherits list');
+<span class="cstat-no" title="statement not covered" >assert(wrap.spliced, 'aura invoked the wrapper instead');</span>
+<span class="cstat-no" title="statement not covered" >assert(list.join('') === 'cadabra', 'aura modified the list');</span>
+<span class="cstat-no" title="statement not covered" >assert(aura.join('') === 'cadabra', 'aura inherits list');</span>
 &nbsp;
-list = ['12'];
-aura = majinbuu.aura(wrap, list);
-majinbuu(aura, ['a', 'b']);
-assert(aura.join('') === 'ab', 'single to double is OK');
+<span class="cstat-no" title="statement not covered" >list = ['12'];</span>
+<span class="cstat-no" title="statement not covered" >aura = majinbuu.aura(wrap, list);</span>
+<span class="cstat-no" title="statement not covered" >majinbuu(aura, ['a', 'b']);</span>
+<span class="cstat-no" title="statement not covered" >assert(aura.join('') === 'ab', 'single to double is OK');</span>
 &nbsp;
-list = '0123456789'.split('');
-log('## grid limit');
-majinbuu(
+<span class="cstat-no" title="statement not covered" >list = '0123456789'.split('');</span>
+<span class="cstat-no" title="statement not covered" >log('## grid limit');</span>
+<span class="cstat-no" title="statement not covered" >majinbuu(</span>
   majinbuu.aura({
-    splice: function (index, many) {
-      assert(
+    splice: <span class="fstat-no" title="function not covered" >function (index, many) {</span>
+<span class="cstat-no" title="statement not covered" >      assert(</span>
         index === 0 &amp;&amp;
         many === list.length &amp;&amp;
         list.slice.call(arguments, 2).join('') === 'OK',
@@ -280,7 +280,7 @@ majinbuu(
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Sep 27 2017 17:09:11 GMT+0100 (BST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 06 2017 14:32:58 GMT-0300 (-03)
 </div>
 </div>
 <script src="../prettify.js"></script>
