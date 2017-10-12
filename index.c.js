@@ -1,20 +1,24 @@
-const majinbuu = (() => {'use strict';
+'use strict';
+
+var majinbuu = function () {
+  'use strict';
 
   /*! Copyright (c) 2017, Andrea Giammarchi, @WebReflection */
 
   // grid operations
-  const DELETE = 'del';
-  const INSERT = 'ins';
-  const SUBSTITUTE = 'sub';
+
+  var DELETE = 'del';
+  var INSERT = 'ins';
+  var SUBSTITUTE = 'sub';
 
   // typed Array
-  const TypedArray = global.Int32Array || Array;
+  var TypedArray = global.Int32Array || Array;
 
-  const majinbuu = (from, to, MAX_SIZE) => {
+  var majinbuu = function majinbuu(from, to, MAX_SIZE) {
 
-    const fromLength = from.length;
-    const toLength = to.length;
-    const TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt((fromLength || 1) * (toLength || 1));
+    var fromLength = from.length;
+    var toLength = to.length;
+    var TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt((fromLength || 1) * (toLength || 1));
 
     if (fromLength < 1 || TOO_MANY) {
       if (toLength || TOO_MANY) {
@@ -26,22 +30,19 @@ const majinbuu = (() => {'use strict';
       from.splice(0);
       return;
     }
-    performOperations(
-      from,
-      getOperations(from, to, levenstein(from, to))
-    );
-  }; 
+    performOperations(from, getOperations(from, to, levenstein(from, to)));
+  };
 
   // given an object that would like to intercept
   // all splice operations performed through a list,
   // wraps the list.splice method to delegate such object
   // and it puts back original splice right before every invocation.
   // Note: do not use the same list in two different aura
-  const aura = (splicer, list) => {
-    const splice = list.splice;
-    const $splice = (...args) => {
+  var aura = function aura(splicer, list) {
+    var splice = list.splice;
+    var $splice = function $splice() {
       list.splice = splice;
-      const result = splicer.splice(...args);
+      var result = splicer.splice.apply(splicer, arguments);
       list.splice = $splice;
       return result;
     };
@@ -55,21 +56,24 @@ const majinbuu = (() => {'use strict';
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
   // then rewritten in C for Emscripten (see levenstein.c)
   // then "screw you ASM" due no much gain but very bloated code
-  const levenstein = (from, to) => {
-    const fromLength = from.length + 1;
-    const toLength = to.length + 1;
-    const size = fromLength * toLength;
-    const grid = new TypedArray(size);
-    let x = 0;
-    let y = 0;
-    let X = 0;
-    let Y = 0;
-    let crow = 0;
-    let prow = 0;
-    let del, ins, sub;
+  var levenstein = function levenstein(from, to) {
+    var fromLength = from.length + 1;
+    var toLength = to.length + 1;
+    var size = fromLength * toLength;
+    var grid = new TypedArray(size);
+    var x = 0;
+    var y = 0;
+    var X = 0;
+    var Y = 0;
+    var crow = 0;
+    var prow = 0;
+    var del = void 0,
+        ins = void 0,
+        sub = void 0;
     grid[0] = 0;
-    while (++x < toLength) grid[x] = x;
-    while (++y < fromLength) {
+    while (++x < toLength) {
+      grid[x] = x;
+    }while (++y < fromLength) {
       X = x = 0;
       prow = crow;
       crow = y * toLength;
@@ -78,11 +82,7 @@ const majinbuu = (() => {'use strict';
         del = grid[prow + x] + 1;
         ins = grid[crow + X] + 1;
         sub = grid[prow + X] + (from[Y] == to[X] ? 0 : 1);
-        grid[crow + x] = del < ins ?
-                          (del < sub ?
-                            del : sub) :
-                          (ins < sub ?
-                            ins : sub);
+        grid[crow + x] = del < ins ? del < sub ? del : sub : ins < sub ? ins : sub;
         ++X;
       };
       Y = y;
@@ -91,20 +91,23 @@ const majinbuu = (() => {'use strict';
   };
 
   // add operations (in reversed order)
-  const addOperation = (list, type, x, y, count, items) => {
-    list.unshift({type, x, y, count, items});
+  var addOperation = function addOperation(list, type, x, y, count, items) {
+    list.unshift({ type: type, x: x, y: y, count: count, items: items });
   };
 
   // walk the Levenshtein grid bottom -> up
-  const getOperations = (Y, X, grid) => {
-    const list = [];
-    const YL = Y.length + 1;
-    const XL = X.length + 1;
-    let y = YL - 1;
-    let x = XL - 1;
-    let cell,
-        top, left, diagonal,
-        crow, prow;
+  var getOperations = function getOperations(Y, X, grid) {
+    var list = [];
+    var YL = Y.length + 1;
+    var XL = X.length + 1;
+    var y = YL - 1;
+    var x = XL - 1;
+    var cell = void 0,
+        top = void 0,
+        left = void 0,
+        diagonal = void 0,
+        crow = void 0,
+        prow = void 0;
     while (x && y) {
       crow = y * XL + x;
       prow = crow - XL;
@@ -118,12 +121,10 @@ const majinbuu = (() => {'use strict';
         if (diagonal < cell) {
           addOperation(list, SUBSTITUTE, x, y, 1, [X[x]]);
         }
-      }
-      else if (left <= top && left <= cell) {
+      } else if (left <= top && left <= cell) {
         x--;
         addOperation(list, INSERT, x, y, 0, [X[x]]);
-      }
-      else {
+      } else {
         y--;
         addOperation(list, DELETE, x, y, 1, []);
       }
@@ -138,23 +139,23 @@ const majinbuu = (() => {'use strict';
   };
 
   /* grouped operations */
-  const performOperations = (target, operations) => {
-    const length = operations.length;
-    let diff = 0;
-    let i = 1;
-    let curr, prev, op;
+  var performOperations = function performOperations(target, operations) {
+    var length = operations.length;
+    var diff = 0;
+    var i = 1;
+    var curr = void 0,
+        prev = void 0,
+        op = void 0;
     if (length) {
-      op = (prev = operations[0]);
+      op = prev = operations[0];
       while (i < length) {
         curr = operations[i++];
-        if (prev.type === curr.type && (curr.x - prev.x) <= 1 && (curr.y - prev.y) <= 1) {
+        if (prev.type === curr.type && curr.x - prev.x <= 1 && curr.y - prev.y <= 1) {
           op.count += curr.count;
           op.items = op.items.concat(curr.items);
         } else {
           target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
-          diff += op.type === INSERT ?
-            op.items.length : (op.type === DELETE ?
-              -op.count : 0);
+          diff += op.type === INSERT ? op.items.length : op.type === DELETE ? -op.count : 0;
           op = curr;
         }
         prev = curr;
@@ -166,5 +167,5 @@ const majinbuu = (() => {'use strict';
   // module
   majinbuu.aura = aura;
   return majinbuu;
-
-})();
+}();
+try { module.exports = majinbuu; } catch(e) {}

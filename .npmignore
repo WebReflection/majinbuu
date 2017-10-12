@@ -3,6 +3,7 @@ node_modules/*
 .gitignore
 .travis.yml
 benchmark.js
+index.js
 levenstein
 levenstein.*
 test.js

@@ -168,3 +168,4 @@ const majinbuu = (() => {'use strict';
   return majinbuu;
 
 })();
+export default majinbuu;
