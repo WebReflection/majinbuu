@@ -2,16 +2,16 @@
   "name": "majinbuu",
   "version": "1.0.0",
   "description": "coming soon",
-  "main": "index.m.js",
+  "main": "cjs/main.js",
+  "module": "esm/main.js",
   "scripts": {
-    "babel": "babel ./index.js --out-file ./index.c.js --presets=es2015",
-    "cjs": "npm run babel && echo 'try { module.exports = majinbuu; } catch(e) {}' >> index.c.js",
-    "esm": "cp index.js index.m.js && echo 'export default majinbuu;' >> index.m.js",
-    "levenstein": "gcc levenstein.c -O3 -o levenstein",
-    "build": "npm run esm && npm run cjs && npm run minify && npm test && npm run size",
+    "build": "npm run cjs && npm run bundle && npm run minify && npm test && npm run size",
+    "bundle": "echo \"const majinbuu = $(asbundle esm/main.js)\" | babel --out-file ./index.js --presets=es2015",
+    "cjs": "ascjs esm cjs",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "minify": "uglifyjs index.c.js --comments=/^!/ --compress --mangle -o min.js && sed -i 's/global/window/' min.js",
-    "size": "cat index.js | wc -c;cat min.js | wc -c;gzip -c min.js | wc -c",
+    "levenstein": "gcc levenstein.c -O3 -o levenstein",
+    "minify": "uglifyjs index.js --comments=/^!/ --compress --mangle -o min.js",
+    "size": "asbundle esm/main.js | wc -c; cat min.js | wc -c; gzip -c min.js | wc -c",
     "test": "istanbul cover test.js"
   },
   "repository": {
@@ -32,6 +32,8 @@
   },
   "homepage": "https://github.com/WebReflection/majinbuu#readme",
   "devDependencies": {
+    "asbundle": "^0.2.0",
+    "ascjs": "^0.1.8",
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "coveralls": "^2.13.1",

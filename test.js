@@ -1,5 +1,5 @@
 var {title, assert, log} = require('tressa');
-var majinbuu = require('./index.c.js');
+var majinbuu = require('./cjs/main.js').default;
 
 title('Majin Buu');
 
@@ -35,8 +35,8 @@ test('abra', 'cadabra');
 test('matrix', 'xxxmatr');
 
 delete global.Int32Array;
-delete require.cache[require.resolve('./index.c.js')];
-var majinbuu = require('./index.c.js');
+delete require.cache[require.resolve('./cjs/main.js')];
+var majinbuu = require('./cjs/main.js').default;
 
 log('## majinbuu.aura');
 var list = 'abra'.split('');
