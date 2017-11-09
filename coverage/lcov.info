@@ -78,8 +78,10 @@ BRH:11
 end_of_record
 TN:
 SF:/home/webreflection/code/majinbuu/cjs/main.js
-FNF:0
-FNH:0
+FN:41,$splice
+FNF:1
+FNH:1
+FNDA:5,$splice
 DA:5,2
 DA:6,2
 DA:7,2
@@ -98,7 +100,7 @@ DA:26,1
 DA:28,13
 DA:39,2
 DA:40,3
-DA:41,3
+DA:41,1
 DA:42,5
 DA:43,5
 DA:44,5

@@ -10,6 +10,9 @@ var majinbuu = function (cache, modules) {
     modules[i].call(exports, window, require, module, exports);
     return cache[i] = module.exports;
   }
+  require.E = function (exports) {
+    return Object.defineProperty(exports, '__esModule', { value: true });
+  };
   var main = require(0);
   return main.__esModule ? main.default : main;
 }([], [function (global, require, module, exports) {
@@ -52,12 +55,12 @@ var majinbuu = function (cache, modules) {
   // Note: do not use the same list in two different aura
   var aura = function aura(splicer, list) {
     var splice = list.splice;
-    var $splice = function $splice() {
+    function $splice() {
       list.splice = splice;
       var result = splicer.splice.apply(splicer, arguments);
       list.splice = $splice;
       return result;
-    };
+    }
     list.splice = $splice;
     return list;
   };
@@ -178,7 +181,7 @@ var majinbuu = function (cache, modules) {
 
   majinbuu.aura = aura;
 
-  Object.defineProperty(exports, '__esModule', { value: true }).default = majinbuu;
+  require.E(exports).default = majinbuu;
   exports.aura = aura;
   exports.majinbuu = majinbuu;
 }]);

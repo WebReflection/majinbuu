@@ -38,12 +38,12 @@ const majinbuu = (from, to, MAX_SIZE) => {
 // Note: do not use the same list in two different aura
 const aura = (splicer, list) => {
   const splice = list.splice;
-  const $splice = (...args) => {
+  function $splice() {
     list.splice = splice;
-    const result = splicer.splice(...args);
+    const result = splicer.splice.apply(splicer, arguments);
     list.splice = $splice;
     return result;
-  };
+  }
   list.splice = $splice;
   return list;
 };
