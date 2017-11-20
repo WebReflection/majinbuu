@@ -13,7 +13,7 @@ function test(a, b) {
   var brr = b.split('');
   count = 0;
   arr.splice = splice;
-  majinbuu(arr, brr);
+  majinbuu(arr, brr, 10);
   assert(arr.join('') === brr.join(''), `\x1b[2m[${count}]\x1b[22m ${a || '<empty>'} => ${b || '<empty>'}`);
   if (a !== b) {
     arr = b.split('');

@@ -31,10 +31,11 @@ var majinbuu = function (cache, modules) {
 
     var fromLength = from.length;
     var toLength = to.length;
-    var TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt((fromLength || 1) * (toLength || 1));
+    var SIZE = MAX_SIZE || Infinity;
+    var TOO_MANY = SIZE !== Infinity && SIZE < Math.sqrt((fromLength || 1) * (toLength || 1));
 
-    if (fromLength < 1 || TOO_MANY) {
-      if (toLength || TOO_MANY) {
+    if (TOO_MANY || fromLength < 1) {
+      if (TOO_MANY || toLength) {
         from.splice.apply(from, [0, fromLength].concat(to));
       }
       return;
