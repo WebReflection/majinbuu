@@ -7,7 +7,7 @@ const INSERT = 'ins';
 const SUBSTITUTE = 'sub';
 
 // typed Array
-const TypedArray = global.Int32Array || Array;
+const TypedArray = typeof Int32Array === 'function' ? Int32Array : Array;
 
 const majinbuu = (from, to, MAX_SIZE) => {
 

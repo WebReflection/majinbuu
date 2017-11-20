@@ -1,5 +1,3 @@
-'use strict';
-
 var majinbuu = function (cache, modules) {
   function require(i) {
     return cache[i] || get(i);
@@ -27,7 +25,7 @@ var majinbuu = function (cache, modules) {
   var SUBSTITUTE = 'sub';
 
   // typed Array
-  var TypedArray = global.Int32Array || Array;
+  var TypedArray = typeof Int32Array === 'function' ? Int32Array : Array;
 
   var majinbuu = function majinbuu(from, to, MAX_SIZE) {
 
