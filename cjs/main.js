@@ -13,12 +13,10 @@ const majinbuu = (from, to, MAX_SIZE) => {
 
   const fromLength = from.length;
   const toLength = to.length;
-  const SIZE = MAX_SIZE || Infinity;
-  const TOO_MANY =  SIZE !== Infinity &&
-                    SIZE < Math.sqrt((fromLength || 1) * (toLength || 1));
+  const TOO_MANY = (MAX_SIZE || Infinity) < Math.sqrt((fromLength || 1) * (toLength || 1));
 
-  if (TOO_MANY || fromLength < 1) {
-    if (TOO_MANY || toLength) {
+  if (fromLength < 1 || TOO_MANY) {
+    if (toLength || TOO_MANY) {
       from.splice.apply(from, [0, fromLength].concat(to));
     }
     return;
