@@ -10,11 +10,6 @@ const TypedArray = typeof Int32Array === 'function' ? Int32Array : Array;
 
 const majinbuu = (from, to, MAX_SIZE) => {
 
-  if(from === to) {
-    //# same arrays. Do nothing
-    return;
-  }
-
   const fromLength = from.length;
   const toLength = to.length;
   const SIZE = MAX_SIZE || Infinity;
@@ -31,25 +26,10 @@ const majinbuu = (from, to, MAX_SIZE) => {
     from.splice(0);
     return;
   }
-  const minLength = Math.min(fromLength, toLength);
-  let beginIndex = 0; while(beginIndex < minLength && from[beginIndex] === to[beginIndex]) {
-    beginIndex += 1;
-  }
-  if(beginIndex == fromLength && fromLength == toLength) {
-    //# content of { from } and { to } are equal. Do nothing
-    return;
-  }
-  else {
-    let endRelIndex = 0; //# relative from both ends { from } and { to }. { -1 } is last element, { -2 } is { to[to.length - 2] } and { from[fromLength - 2] } etc
-    const fromLengthMinus1 = fromLength - 1, toLengthMinus1 = toLength - 1;  
-    while(beginIndex < minLength + endRelIndex && from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]) {
-      endRelIndex -= 1;
-    }
-    performOperations(
-      from,
-      getOperations(from, to, levenstein(from, to, beginIndex, endRelIndex), beginIndex, endRelIndex)
-    );
-  }
+  performOperations(
+    from,
+    getOperations(from, to, levenstein(from, to))
+  );
 }; 
 
 // given an object that would like to intercept
@@ -75,9 +55,9 @@ const aura = (splicer, list) => {
 // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
 // then rewritten in C for Emscripten (see levenstein.c)
 // then "screw you ASM" due no much gain but very bloated code
-const levenstein = (from, to, beginIndex, endRelIndex) => {
-  const fromLength = from.length + 1 - beginIndex + endRelIndex;
-  const toLength = to.length + 1 - beginIndex + endRelIndex;
+const levenstein = (from, to) => {
+  const fromLength = from.length + 1;
+  const toLength = to.length + 1;
   const size = fromLength * toLength;
   const grid = new TypedArray(size);
   let x = 0;
@@ -97,7 +77,7 @@ const levenstein = (from, to, beginIndex, endRelIndex) => {
     while (++x < toLength) {
       del = grid[prow + x] + 1;
       ins = grid[crow + X] + 1;
-      sub = grid[prow + X] + (from[Y + beginIndex] == to[X + beginIndex] ? 0 : 1);
+      sub = grid[prow + X] + (from[Y] == to[X] ? 0 : 1);
       grid[crow + x] = del < ins ?
                         (del < sub ?
                           del : sub) :
@@ -116,10 +96,10 @@ const addOperation = (list, type, x, y, count, items) => {
 };
 
 // walk the Levenshtein grid bottom -> up
-const getOperations = (Y, X, grid, beginIndex, endRelIndex) => {
+const getOperations = (Y, X, grid) => {
   const list = [];
-  const YL = Y.length + 1 - beginIndex + endRelIndex;
-  const XL = X.length + 1 - beginIndex + endRelIndex;
+  const YL = Y.length + 1;
+  const XL = X.length + 1;
   let y = YL - 1;
   let x = XL - 1;
   let cell,
@@ -136,23 +116,23 @@ const getOperations = (Y, X, grid, beginIndex, endRelIndex) => {
       x--;
       y--;
       if (diagonal < cell) {
-        addOperation(list, SUBSTITUTE, x + beginIndex, y + beginIndex, 1, [X[x + beginIndex]]);
+        addOperation(list, SUBSTITUTE, x, y, 1, [X[x]]);
       }
     }
     else if (left <= top && left <= cell) {
       x--;
-      addOperation(list, INSERT, x + beginIndex, y + beginIndex, 0, [X[x + beginIndex]]);
+      addOperation(list, INSERT, x, y, 0, [X[x]]);
     }
     else {
       y--;
-      addOperation(list, DELETE, x + beginIndex, y + beginIndex, 1, []);
+      addOperation(list, DELETE, x, y, 1, []);
     }
   }
   while (x--) {
-    addOperation(list, INSERT, x + beginIndex, y + beginIndex, 0, [X[x + beginIndex]]);
+    addOperation(list, INSERT, x, y, 0, [X[x]]);
   }
   while (y--) {
-    addOperation(list, DELETE, x + beginIndex, y + beginIndex, 1, []);
+    addOperation(list, DELETE, x, y, 1, []);
   }
   return list;
 };

@@ -25,8 +25,6 @@ function test(a, b) {
   }
 }
 
-let sameArray = []; majinbuu(sameArray, sameArray); //# to cover { if(from === to) return; } trivial case
-
 test('', '');
 test('same', 'same');
 test('democrat', 'republican');
@@ -35,7 +33,6 @@ test('abc', '');
 test('roar', 'meow');
 test('abra', 'cadabra');
 test('matrix', 'xxxmatr');
-test('matrix', 'matrixhasyou'); //# check that skipping of equal elements at begin works
 
 delete global.Int32Array;
 delete require.cache[require.resolve('./cjs/main.js')];
