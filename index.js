@@ -14,7 +14,7 @@ var majinbuu = function (cache, modules) {
   var main = require(0);
   return main.__esModule ? main.default : main;
 }([], [function (global, require, module, exports) {
-  // main.js
+  // index.js
   'use strict';
   /*! Copyright (c) 2017, Andrea Giammarchi, @WebReflection */
 
@@ -27,12 +27,22 @@ var majinbuu = function (cache, modules) {
   // typed Array
   var TypedArray = typeof Int32Array === 'function' ? Int32Array : Array;
 
+  // shortcuts
+  var min = Math.min,
+      sqrt = Math.sqrt;
+
+
   var majinbuu = function majinbuu(from, to, MAX_SIZE) {
+
+    if (from === to) {
+      //# same arrays. Do nothing
+      return;
+    }
 
     var fromLength = from.length;
     var toLength = to.length;
     var SIZE = MAX_SIZE || Infinity;
-    var TOO_MANY = SIZE !== Infinity && SIZE < Math.sqrt((fromLength || 1) * (toLength || 1));
+    var TOO_MANY = SIZE !== Infinity && SIZE < sqrt((fromLength || 1) * (toLength || 1));
 
     if (TOO_MANY || fromLength < 1) {
       if (TOO_MANY || toLength) {
@@ -44,7 +54,25 @@ var majinbuu = function (cache, modules) {
       from.splice(0);
       return;
     }
-    performOperations(from, getOperations(from, to, levenstein(from, to)));
+    var minLength = min(fromLength, toLength);
+    var beginIndex = 0;
+    while (beginIndex < minLength && from[beginIndex] === to[beginIndex]) {
+      beginIndex += 1;
+    }
+    if (beginIndex == fromLength && fromLength == toLength) {
+      // content of { from } and { to } are equal. Do nothing
+      return;
+    } else {
+      // relative from both ends { from } and { to }. { -1 } is last element,
+      // { -2 } is { to[to.length - 2] } and { from[fromLength - 2] } etc
+      var endRelIndex = 0;
+      var fromLengthMinus1 = fromLength - 1;
+      var toLengthMinus1 = toLength - 1;
+      while (beginIndex < minLength + endRelIndex && from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]) {
+        endRelIndex--;
+      }
+      performOperations(from, getOperations(from, to, levenstein(from, to, beginIndex, endRelIndex), beginIndex, endRelIndex));
+    }
   };
 
   // given an object that would like to intercept
@@ -70,9 +98,9 @@ var majinbuu = function (cache, modules) {
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
   // then rewritten in C for Emscripten (see levenstein.c)
   // then "screw you ASM" due no much gain but very bloated code
-  var levenstein = function levenstein(from, to) {
-    var fromLength = from.length + 1;
-    var toLength = to.length + 1;
+  var levenstein = function levenstein(from, to, beginIndex, endRelIndex) {
+    var fromLength = from.length + 1 - beginIndex + endRelIndex;
+    var toLength = to.length + 1 - beginIndex + endRelIndex;
     var size = fromLength * toLength;
     var grid = new TypedArray(size);
     var x = 0;
@@ -95,7 +123,7 @@ var majinbuu = function (cache, modules) {
       while (++x < toLength) {
         del = grid[prow + x] + 1;
         ins = grid[crow + X] + 1;
-        sub = grid[prow + X] + (from[Y] == to[X] ? 0 : 1);
+        sub = grid[prow + X] + (from[Y + beginIndex] == to[X + beginIndex] ? 0 : 1);
         grid[crow + x] = del < ins ? del < sub ? del : sub : ins < sub ? ins : sub;
         ++X;
       };
@@ -110,10 +138,10 @@ var majinbuu = function (cache, modules) {
   };
 
   // walk the Levenshtein grid bottom -> up
-  var getOperations = function getOperations(Y, X, grid) {
+  var getOperations = function getOperations(Y, X, grid, beginIndex, endRelIndex) {
     var list = [];
-    var YL = Y.length + 1;
-    var XL = X.length + 1;
+    var YL = Y.length + 1 - beginIndex + endRelIndex;
+    var XL = X.length + 1 - beginIndex + endRelIndex;
     var y = YL - 1;
     var x = XL - 1;
     var cell = void 0,
@@ -133,21 +161,21 @@ var majinbuu = function (cache, modules) {
         x--;
         y--;
         if (diagonal < cell) {
-          addOperation(list, SUBSTITUTE, x, y, 1, [X[x]]);
+          addOperation(list, SUBSTITUTE, x + beginIndex, y + beginIndex, 1, [X[x + beginIndex]]);
         }
       } else if (left <= top && left <= cell) {
         x--;
-        addOperation(list, INSERT, x, y, 0, [X[x]]);
+        addOperation(list, INSERT, x + beginIndex, y + beginIndex, 0, [X[x + beginIndex]]);
       } else {
         y--;
-        addOperation(list, DELETE, x, y, 1, []);
+        addOperation(list, DELETE, x + beginIndex, y + beginIndex, 1, []);
       }
     }
     while (x--) {
-      addOperation(list, INSERT, x, y, 0, [X[x]]);
+      addOperation(list, INSERT, x + beginIndex, y + beginIndex, 0, [X[x + beginIndex]]);
     }
     while (y--) {
-      addOperation(list, DELETE, x, y, 1, []);
+      addOperation(list, DELETE, x + beginIndex, y + beginIndex, 1, []);
     }
     return list;
   };
@@ -160,22 +188,20 @@ var majinbuu = function (cache, modules) {
     var curr = void 0,
         prev = void 0,
         op = void 0;
-    if (length) {
-      op = prev = operations[0];
-      while (i < length) {
-        curr = operations[i++];
-        if (prev.type === curr.type && curr.x - prev.x <= 1 && curr.y - prev.y <= 1) {
-          op.count += curr.count;
-          op.items = op.items.concat(curr.items);
-        } else {
-          target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
-          diff += op.type === INSERT ? op.items.length : op.type === DELETE ? -op.count : 0;
-          op = curr;
-        }
-        prev = curr;
+    op = prev = operations[0];
+    while (i < length) {
+      curr = operations[i++];
+      if (prev.type === curr.type && curr.x - prev.x <= 1 && curr.y - prev.y <= 1) {
+        op.count += curr.count;
+        op.items = op.items.concat(curr.items);
+      } else {
+        target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
+        diff += op.type === INSERT ? op.items.length : op.type === DELETE ? -op.count : 0;
+        op = curr;
       }
-      target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
+      prev = curr;
     }
+    target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
   };
 
   majinbuu.aura = aura;

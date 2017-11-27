@@ -1,5 +1,5 @@
 var {title, assert, log} = require('tressa');
-var majinbuu = require('./cjs/main.js').default;
+var majinbuu = require('./cjs').default;
 
 title('Majin Buu');
 
@@ -38,8 +38,8 @@ test('matrix', 'xxxmatr');
 test('matrix', 'matrixhasyou'); //# check that skipping of equal elements at begin works
 
 delete global.Int32Array;
-delete require.cache[require.resolve('./cjs/main.js')];
-var majinbuu = require('./cjs/main.js').default;
+delete require.cache[require.resolve('./cjs')];
+var majinbuu = require('./cjs').default;
 
 log('## majinbuu.aura');
 var list = 'abra'.split('');

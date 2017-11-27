@@ -1,3 +1,4 @@
+'use strict';
 /*! Copyright (c) 2017, Andrea Giammarchi, @WebReflection */
 
 // grid operations
@@ -7,6 +8,9 @@ const SUBSTITUTE = 'sub';
 
 // typed Array
 const TypedArray = typeof Int32Array === 'function' ? Int32Array : Array;
+
+// shortcuts
+const { min, sqrt } = Math;
 
 const majinbuu = (from, to, MAX_SIZE) => {
 
@@ -19,7 +23,7 @@ const majinbuu = (from, to, MAX_SIZE) => {
   const toLength = to.length;
   const SIZE = MAX_SIZE || Infinity;
   const TOO_MANY =  SIZE !== Infinity &&
-                    SIZE < Math.sqrt((fromLength || 1) * (toLength || 1));
+                    SIZE < sqrt((fromLength || 1) * (toLength || 1));
 
   if (TOO_MANY || fromLength < 1) {
     if (TOO_MANY || toLength) {
@@ -31,23 +35,34 @@ const majinbuu = (from, to, MAX_SIZE) => {
     from.splice(0);
     return;
   }
-  const minLength = Math.min(fromLength, toLength);
-  let beginIndex = 0; while(beginIndex < minLength && from[beginIndex] === to[beginIndex]) {
+  const minLength = min(fromLength, toLength);
+  let beginIndex = 0;
+  while(beginIndex < minLength && from[beginIndex] === to[beginIndex]) {
     beginIndex += 1;
   }
   if(beginIndex == fromLength && fromLength == toLength) {
-    //# content of { from } and { to } are equal. Do nothing
+    // content of { from } and { to } are equal. Do nothing
     return;
   }
   else {
-    let endRelIndex = 0; //# relative from both ends { from } and { to }. { -1 } is last element, { -2 } is { to[to.length - 2] } and { from[fromLength - 2] } etc
-    const fromLengthMinus1 = fromLength - 1, toLengthMinus1 = toLength - 1;  
-    while(beginIndex < minLength + endRelIndex && from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]) {
-      endRelIndex -= 1;
+    // relative from both ends { from } and { to }. { -1 } is last element,
+    // { -2 } is { to[to.length - 2] } and { from[fromLength - 2] } etc
+    let endRelIndex = 0;
+    const fromLengthMinus1 = fromLength - 1;
+    const toLengthMinus1 = toLength - 1;  
+    while(
+      beginIndex < (minLength + endRelIndex) &&
+      from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]
+    ) {
+      endRelIndex--;
     }
     performOperations(
       from,
-      getOperations(from, to, levenstein(from, to, beginIndex, endRelIndex), beginIndex, endRelIndex)
+      getOperations(
+        from, to,
+        levenstein(from, to, beginIndex, endRelIndex),
+        beginIndex, endRelIndex
+      )
     );
   }
 }; 
@@ -163,27 +178,26 @@ const performOperations = (target, operations) => {
   let diff = 0;
   let i = 1;
   let curr, prev, op;
-  if (length) {
-    op = (prev = operations[0]);
-    while (i < length) {
-      curr = operations[i++];
-      if (prev.type === curr.type && (curr.x - prev.x) <= 1 && (curr.y - prev.y) <= 1) {
-        op.count += curr.count;
-        op.items = op.items.concat(curr.items);
-      } else {
-        target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
-        diff += op.type === INSERT ?
-          op.items.length : (op.type === DELETE ?
-            -op.count : 0);
-        op = curr;
-      }
-      prev = curr;
+  op = (prev = operations[0]);
+  while (i < length) {
+    curr = operations[i++];
+    if (prev.type === curr.type && (curr.x - prev.x) <= 1 && (curr.y - prev.y) <= 1) {
+      op.count += curr.count;
+      op.items = op.items.concat(curr.items);
+    } else {
+      target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
+      diff += op.type === INSERT ?
+        op.items.length : (op.type === DELETE ?
+          -op.count : 0);
+      op = curr;
     }
-    target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
+    prev = curr;
   }
+  target.splice.apply(target, [op.y + diff, op.count].concat(op.items));
 };
 
 majinbuu.aura = aura;
 
-export default majinbuu;
-export {aura, majinbuu};
+Object.defineProperty(exports, '__esModule', {value: true}).default = majinbuu;
+exports.aura = aura;
+exports.majinbuu = majinbuu;
