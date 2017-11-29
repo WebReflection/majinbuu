@@ -79,3 +79,14 @@ majinbuu(
   'OK'.split(''),
   3
 );
+
+const abra = ['a', 'b', 'r', 'a'];
+majinbuu(
+  abra,
+  ['c', 'a', 'd', 'a', 'b', 'r', 'a'],
+  0, 1, 4,
+  0, 4, 7,
+  0
+);
+
+tressa.assert(abra.join('') === 'cadabra', 'passing extra info works too');

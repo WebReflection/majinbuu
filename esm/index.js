@@ -11,18 +11,35 @@ const TypedArray = typeof Int32Array === 'function' ? Int32Array : Array;
 // shortcuts
 const { min, sqrt } = Math;
 
-const majinbuu = (from, to, MAX_SIZE) => {
+const majinbuu = function (
+  from, to,
+  fromStart, fromEnd, fromLength,
+  toStart, toEnd, toLength,
+  SIZE
+) {
 
   if(from === to) {
     //# same arrays. Do nothing
     return;
   }
 
-  const fromLength = from.length;
-  const toLength = to.length;
-  const SIZE = MAX_SIZE || Infinity;
+  if (arguments.length < 4) {
+    SIZE = fromStart || Infinity;
+    fromLength = from.length;
+    fromStart = 0;
+    fromEnd = fromLength;
+    toLength = to.length;
+    toStart = 0;
+    toEnd = toLength;
+  } else {
+    SIZE = SIZE || Infinity;
+  }
+
   const TOO_MANY =  SIZE !== Infinity &&
-                    SIZE < sqrt((fromLength || 1) * (toLength || 1));
+                    SIZE < sqrt(
+                      ((fromEnd - fromStart) || 1) *
+                      ((toEnd - toStart) || 1)
+                    );
 
   if (TOO_MANY || fromLength < 1) {
     if (TOO_MANY || toLength) {
@@ -35,7 +52,7 @@ const majinbuu = (from, to, MAX_SIZE) => {
     return;
   }
   const minLength = min(fromLength, toLength);
-  let beginIndex = 0;
+  let beginIndex = fromStart;
   while(beginIndex < minLength && from[beginIndex] === to[beginIndex]) {
     beginIndex += 1;
   }
@@ -47,8 +64,8 @@ const majinbuu = (from, to, MAX_SIZE) => {
     // relative from both ends { from } and { to }. { -1 } is last element,
     // { -2 } is { to[to.length - 2] } and { from[fromLength - 2] } etc
     let endRelIndex = 0;
-    const fromLengthMinus1 = fromLength - 1;
-    const toLengthMinus1 = toLength - 1;  
+    const fromLengthMinus1 = fromEnd - 1;
+    const toLengthMinus1 = toEnd - 1;  
     while(
       beginIndex < (minLength + endRelIndex) &&
       from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]

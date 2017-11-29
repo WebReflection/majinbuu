@@ -32,17 +32,26 @@ var majinbuu = function (cache, modules) {
       sqrt = Math.sqrt;
 
 
-  var majinbuu = function majinbuu(from, to, MAX_SIZE) {
+  var majinbuu = function majinbuu(from, to, fromStart, fromEnd, fromLength, toStart, toEnd, toLength, SIZE) {
 
     if (from === to) {
       //# same arrays. Do nothing
       return;
     }
 
-    var fromLength = from.length;
-    var toLength = to.length;
-    var SIZE = MAX_SIZE || Infinity;
-    var TOO_MANY = SIZE !== Infinity && SIZE < sqrt((fromLength || 1) * (toLength || 1));
+    if (arguments.length < 4) {
+      SIZE = fromStart || Infinity;
+      fromLength = from.length;
+      fromStart = 0;
+      fromEnd = fromLength;
+      toLength = to.length;
+      toStart = 0;
+      toEnd = toLength;
+    } else {
+      SIZE = SIZE || Infinity;
+    }
+
+    var TOO_MANY = SIZE !== Infinity && SIZE < sqrt((fromEnd - fromStart || 1) * (toEnd - toStart || 1));
 
     if (TOO_MANY || fromLength < 1) {
       if (TOO_MANY || toLength) {
@@ -55,7 +64,7 @@ var majinbuu = function (cache, modules) {
       return;
     }
     var minLength = min(fromLength, toLength);
-    var beginIndex = 0;
+    var beginIndex = fromStart;
     while (beginIndex < minLength && from[beginIndex] === to[beginIndex]) {
       beginIndex += 1;
     }
@@ -66,8 +75,8 @@ var majinbuu = function (cache, modules) {
       // relative from both ends { from } and { to }. { -1 } is last element,
       // { -2 } is { to[to.length - 2] } and { from[fromLength - 2] } etc
       var endRelIndex = 0;
-      var fromLengthMinus1 = fromLength - 1;
-      var toLengthMinus1 = toLength - 1;
+      var fromLengthMinus1 = fromEnd - 1;
+      var toLengthMinus1 = toEnd - 1;
       while (beginIndex < minLength + endRelIndex && from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]) {
         endRelIndex--;
       }
