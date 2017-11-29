@@ -80,7 +80,7 @@ var majinbuu = function (cache, modules) {
       while (beginIndex < minLength + endRelIndex && from[fromLengthMinus1 + endRelIndex] === to[toLengthMinus1 + endRelIndex]) {
         endRelIndex--;
       }
-      performOperations(from, getOperations(from, to, levenstein(from, to, beginIndex, endRelIndex), beginIndex, endRelIndex));
+      performOperations(from, getOperations(levenstein(from, beginIndex, fromLength, to, endRelIndex, toLength), from, beginIndex, fromLength, to, endRelIndex, toLength));
     }
   };
 
@@ -107,10 +107,10 @@ var majinbuu = function (cache, modules) {
   // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
   // then rewritten in C for Emscripten (see levenstein.c)
   // then "screw you ASM" due no much gain but very bloated code
-  var levenstein = function levenstein(from, to, beginIndex, endRelIndex) {
-    var fromLength = from.length + 1 - beginIndex + endRelIndex;
-    var toLength = to.length + 1 - beginIndex + endRelIndex;
-    var size = fromLength * toLength;
+  var levenstein = function levenstein(from, beginIndex, fromLength, to, endRelIndex, toLength) {
+    var fLength = fromLength + 1 - beginIndex + endRelIndex;
+    var tLength = toLength + 1 - beginIndex + endRelIndex;
+    var size = fLength * tLength;
     var grid = new TypedArray(size);
     var x = 0;
     var y = 0;
@@ -122,14 +122,14 @@ var majinbuu = function (cache, modules) {
         ins = void 0,
         sub = void 0;
     grid[0] = 0;
-    while (++x < toLength) {
+    while (++x < tLength) {
       grid[x] = x;
-    }while (++y < fromLength) {
+    }while (++y < fLength) {
       X = x = 0;
       prow = crow;
-      crow = y * toLength;
+      crow = y * tLength;
       grid[crow + x] = y;
-      while (++x < toLength) {
+      while (++x < tLength) {
         del = grid[prow + x] + 1;
         ins = grid[crow + X] + 1;
         sub = grid[prow + X] + (from[Y + beginIndex] == to[X + beginIndex] ? 0 : 1);
@@ -147,10 +147,10 @@ var majinbuu = function (cache, modules) {
   };
 
   // walk the Levenshtein grid bottom -> up
-  var getOperations = function getOperations(Y, X, grid, beginIndex, endRelIndex) {
+  var getOperations = function getOperations(grid, Y, beginIndex, YLength, X, endRelIndex, XLength) {
     var list = [];
-    var YL = Y.length + 1 - beginIndex + endRelIndex;
-    var XL = X.length + 1 - beginIndex + endRelIndex;
+    var YL = YLength + 1 - beginIndex + endRelIndex;
+    var XL = XLength + 1 - beginIndex + endRelIndex;
     var y = YL - 1;
     var x = XL - 1;
     var cell = void 0,

@@ -76,9 +76,12 @@ const majinbuu = function (
     performOperations(
       from,
       getOperations(
-        from, to,
-        levenstein(from, to, beginIndex, endRelIndex),
-        beginIndex, endRelIndex
+        levenstein(
+          from, beginIndex, fromLength,
+          to, endRelIndex, toLength
+        ),
+        from, beginIndex, fromLength,
+        to, endRelIndex, toLength
       )
     );
   }
@@ -107,10 +110,10 @@ const aura = (splicer, list) => {
 // http://webreflection.blogspot.co.uk/2009/02/levenshtein-algorithm-revisited-25.html
 // then rewritten in C for Emscripten (see levenstein.c)
 // then "screw you ASM" due no much gain but very bloated code
-const levenstein = (from, to, beginIndex, endRelIndex) => {
-  const fromLength = from.length + 1 - beginIndex + endRelIndex;
-  const toLength = to.length + 1 - beginIndex + endRelIndex;
-  const size = fromLength * toLength;
+const levenstein = (from, beginIndex, fromLength, to, endRelIndex, toLength) => {
+  const fLength = fromLength + 1 - beginIndex + endRelIndex;
+  const tLength = toLength + 1 - beginIndex + endRelIndex;
+  const size = fLength * tLength;
   const grid = new TypedArray(size);
   let x = 0;
   let y = 0;
@@ -120,13 +123,13 @@ const levenstein = (from, to, beginIndex, endRelIndex) => {
   let prow = 0;
   let del, ins, sub;
   grid[0] = 0;
-  while (++x < toLength) grid[x] = x;
-  while (++y < fromLength) {
+  while (++x < tLength) grid[x] = x;
+  while (++y < fLength) {
     X = x = 0;
     prow = crow;
-    crow = y * toLength;
+    crow = y * tLength;
     grid[crow + x] = y;
-    while (++x < toLength) {
+    while (++x < tLength) {
       del = grid[prow + x] + 1;
       ins = grid[crow + X] + 1;
       sub = grid[prow + X] + (from[Y + beginIndex] == to[X + beginIndex] ? 0 : 1);
@@ -148,10 +151,10 @@ const addOperation = (list, type, x, y, count, items) => {
 };
 
 // walk the Levenshtein grid bottom -> up
-const getOperations = (Y, X, grid, beginIndex, endRelIndex) => {
+const getOperations = (grid, Y, beginIndex, YLength, X, endRelIndex, XLength) => {
   const list = [];
-  const YL = Y.length + 1 - beginIndex + endRelIndex;
-  const XL = X.length + 1 - beginIndex + endRelIndex;
+  const YL = YLength + 1 - beginIndex + endRelIndex;
+  const XL = XLength + 1 - beginIndex + endRelIndex;
   let y = YL - 1;
   let x = XL - 1;
   let cell,
